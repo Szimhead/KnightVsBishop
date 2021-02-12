@@ -1,4 +1,7 @@
 import numpy
+import main
+
+from NextMove import NextMove
 
 
 class Knight:
@@ -7,23 +10,29 @@ class Knight:
         self.neighbours = []
         self.obstacles = []
         self.steps = 0
-        
-    def knight_move(self, direction, boardSize):
+
+    def knight_move(self, direction):
         new_position = numpy.add(self.pos, direction)
-        if self.checkIfInBounds(new_position, boardSize):
-            return new_position
-        else:
-            return self.pos
+        if main.checkIfInBounds(new_position):
+            self.pos = new_position
+
 
     def fillObstacles(self, bishopRange):
         for field in bishopRange:
             self.obstacles.append(field)
 
-    def findNeighbours(self, boardSize):
+    def fillNeighbours(self):
+        self.neighbours = self.findNeighbours(self.pos)
+
+    def nextMove(self, goal):
+        next = NextMove()
+        next.findNext(self.pos, goal, self)
+
+    def findNeighbours(self, position):
+        neighbours = []
         positions = ((1, 2), (1, -2), (-1, 2), (-1, -2), (2, 1), (2, -1), (-2, 1), (-2, -1))
         for pos in positions:
-            if self.checkIfInBounds(pos, boardSize):
-                self.neighbours.append(numpy.add(self.pos, pos))
+            if main.checkIfInBounds(numpy.add(position,pos)):
+                neighbours.append(numpy.add(position, pos))
+        return neighbours
 
-    def checkIfInBounds(self, position, boardSize):
-        return 0 <= position[0] < boardSize and 0 <= position[1] < boardSize

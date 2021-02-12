@@ -3,6 +3,8 @@ import random
 import numpy
 import pygame
 
+import Knight
+
 pygame.font.init()
 
 SIZE = 500
@@ -76,6 +78,10 @@ def knight_move(knight_pos, direction):
         return knight_pos
 
 
+def checkIfInBounds(position):
+    return 0 <= position[0] < BOARD_SIZE and 0 <= position[1] < BOARD_SIZE
+
+
 def main():
     run = True
     clock = pygame.time.Clock()
@@ -86,10 +92,16 @@ def main():
     bishop_pos = [5, 1]
     goal_pos = [6, 1]
 
+    display_pause = False
+
+    knight = Knight.Knight()
+    print(knight.findNeighbours(knight.pos))
+
     while run:
         clock.tick(FPS)
 
-        draw_window(knight_pos, bishop_pos, goal_pos)
+        if not display_pause:
+            draw_window(knight_pos, bishop_pos, goal_pos)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -119,6 +131,15 @@ def main():
                     print("direction " + str(directions[rand]))
                     knight_pos = knight_move(knight_pos, directions[rand])
                     print(knight_pos)
+                    knight.knight_move(directions[rand])
+
+                if event.key == pygame.K_z:
+                    display_pause = not display_pause
+
+                if event.key == pygame.K_x:
+                    knight.nextMove(goal_pos)
+
+                print(knight.findNeighbours(knight.pos))
 
 
 if __name__ == '__main__':
