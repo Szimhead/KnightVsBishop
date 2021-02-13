@@ -1,3 +1,4 @@
+import numpy
 import pygame
 
 from Position import Position
@@ -10,22 +11,22 @@ class NextMove:
         self.openList = []
         self.closedList = []
 
-    def findNext(self, current, goal, figure):
+    def findNext(self, goal, figure):
         positions = []
+
+        current = figure.pos
+
+        goalPos = (goal[0], goal[1])
 
         currentPosition = Position(current)
         currentPosition.cost = 0
         self.openList.append(currentPosition)
 
-        goalPosition = Position(goal)
-
         step = 0
-        while self.openList is not [] and goal not in positions:
-            print(str(step))
-            step += 1
-            for p in self.openList:
-                print(p.position)
-            print()
+        while len(self.openList) > 0 and goalPos not in positions:
+            # print("step " + str(step))
+
+
             minCost = self.openList[0].cost
             cheapestPos = self.openList[0]
             for position in self.openList:
@@ -36,20 +37,51 @@ class NextMove:
             self.openList.remove(cheapestPos)
             self.closedList.append(cheapestPos)
 
-            neighbours = figure.findNeighbours(cheapestPos.position)
+            if step == 0:
+                neighbours = figure.findNeighbours(cheapestPos.position)
+            else:
+                neighbours = figure.findAllNeighbours(cheapestPos.position)
 
+            print(neighbours)
             for neighbour in neighbours:
-                newPos = Position((neighbour[1], neighbour[1]))
-                newPos.parent = currentPosition
-                newPos.calculateCost(newPos.parent.cost, goal)
-                self.openList.append(newPos)
-                positions.append(newPos.position)
+                a = (neighbour[0], neighbour[1])
+                if a not in positions:
+                    newPos = Position((neighbour[0], neighbour[1]))
+                    newPos.parent = cheapestPos
+                    newPos.calculateCost(newPos.parent.cost, goal)
+                    self.openList.append(newPos)
+                    positions.append(newPos.position)
 
-        if goalPosition in self.openList:
-            position = goalPosition.parent
-            while position is not currentPosition:
-                pygame.draw.line(main.WIN, main.GREEN, position.position, position.parent.position, 3)
+            step += 1
+
+        print("am out")
+
+        if goalPos in positions:
+            print("FOUND IT!")
+
+            goalPosition = self.openList[0]
+            i = 1
+            while goalPosition.position != goalPos:
+                goalPosition = self.openList[i]
+                i += 1
+
+            print("found goal in open list")
+
+            steps = []
+
+            while goalPosition.parent.position != current:
+
+                steps.append(goalPosition.position)
+                steps.append(goalPosition.parent.position)
                 pygame.display.update()
+                goalPosition = goalPosition.parent
+
+            steps.append(goalPosition.parent.position)
+
+            return goalPosition.position, steps
+
+        return figure.pos, []
+
 
 
 

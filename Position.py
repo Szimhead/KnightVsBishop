@@ -9,4 +9,4 @@ class Position:
         self.cost = costOfGettingHere + self.manhattanCost(goal)
 
     def manhattanCost(self, goal):
-        return abs(self.position[0] - goal[0]) + abs(self.position[1] + goal[1])
+        return abs(self.position[0] - goal[0]) + abs(self.position[1] - goal[1])
