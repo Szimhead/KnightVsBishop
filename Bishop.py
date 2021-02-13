@@ -16,7 +16,7 @@ class Bishop:
 
     def nextMove(self, goal):
         move = NextMove()
-        self.pos, steps = move.findNext(goal, self)
+        self.pos, steps, cost = move.findNext(goal, self, self.pos)
         return steps
 
     def move(self, direction):
@@ -30,32 +30,32 @@ class Bishop:
 
         neighbours = []
 
-        while main.checkIfInBounds((i, j)):
-            neighbours.append((i, j))
+        while main.checkIfInBounds([i, j]):
+            neighbours.append([i, j])
             i += 1
             j += 1
 
         i = position[0]
         j = position[1]
 
-        while main.checkIfInBounds((i, j)):
-            neighbours.append((i, j))
+        while main.checkIfInBounds([i, j]):
+            neighbours.append([i, j])
             i -= 1
             j -= 1
 
         i = position[0]
         j = position[1]
 
-        while main.checkIfInBounds((i, j)):
-            neighbours.append((i, j))
+        while main.checkIfInBounds([i, j]):
+            neighbours.append([i, j])
             i -= 1
             j += 1
 
         i = position[0]
         j = position[1]
 
-        while main.checkIfInBounds((i, j)):
-            neighbours.append((i, j))
+        while main.checkIfInBounds([i, j]):
+            neighbours.append([i, j])
             i += 1
             j -= 1
 

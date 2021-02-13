@@ -1,8 +1,5 @@
-import numpy
-import pygame
 
 from Position import Position
-import main
 
 
 class NextMove:
@@ -11,22 +8,24 @@ class NextMove:
         self.openList = []
         self.closedList = []
 
-    def findNext(self, goal, figure):
+    def findNext(self, goal, figure, current):
+        self.openList = []
+        self.closedList = []
+        print("looking for a path to goal " + str(goal) + " from " + str(current))
         positions = []
 
-        current = figure.pos
+        goalPos = [goal[0], goal[1]]
 
-        goalPos = (goal[0], goal[1])
+        cost = 0
 
         currentPosition = Position(current)
         currentPosition.cost = 0
         self.openList.append(currentPosition)
+        positions.append(current)
 
         step = 0
         while len(self.openList) > 0 and goalPos not in positions:
             # print("step " + str(step))
-
-
             minCost = self.openList[0].cost
             cheapestPos = self.openList[0]
             for position in self.openList:
@@ -35,18 +34,15 @@ class NextMove:
                     cheapestPos = position
 
             self.openList.remove(cheapestPos)
+            #positions.remove(cheapestPos.position)
             self.closedList.append(cheapestPos)
 
-            if step == 0:
-                neighbours = figure.findNeighbours(cheapestPos.position)
-            else:
-                neighbours = figure.findAllNeighbours(cheapestPos.position)
+            neighbours = figure.findAllNeighbours(cheapestPos.position)
 
-            print(neighbours)
             for neighbour in neighbours:
-                a = (neighbour[0], neighbour[1])
+                a = [neighbour[0], neighbour[1]]
                 if a not in positions:
-                    newPos = Position((neighbour[0], neighbour[1]))
+                    newPos = Position(a)
                     newPos.parent = cheapestPos
                     newPos.calculateCost(newPos.parent.cost, goal)
                     self.openList.append(newPos)
@@ -54,10 +50,7 @@ class NextMove:
 
             step += 1
 
-        print("am out")
-
         if goalPos in positions:
-            print("FOUND IT!")
 
             goalPosition = self.openList[0]
             i = 1
@@ -65,22 +58,19 @@ class NextMove:
                 goalPosition = self.openList[i]
                 i += 1
 
-            print("found goal in open list")
-
             steps = []
 
-            while goalPosition.parent.position != current:
-
+            while [goalPosition.parent.position[0], goalPosition.parent.position[1]] != [current[0], current[1]]:
                 steps.append(goalPosition.position)
                 steps.append(goalPosition.parent.position)
-                pygame.display.update()
                 goalPosition = goalPosition.parent
+                cost += goalPosition.cost
 
             steps.append(goalPosition.parent.position)
 
-            return goalPosition.position, steps
+            return goalPosition.position, steps, cost
 
-        return figure.pos, []
+        return figure.pos, [], cost
 
 
 

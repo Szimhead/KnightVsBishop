@@ -1,3 +1,4 @@
+import os
 import random
 
 import numpy
@@ -22,8 +23,13 @@ LINE_WIDTH = 2
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+LIGHT_GREY = (150, 150, 150)
+DARK_GREY = (50, 50, 50)
 DARK_BLUE = (0, 0, 100)
 GREEN = (0, 255, 0)
+YELLOW = (200, 150, 0)
+LIGHT_YELLOW = (255, 255, 0)
+BLUE = (0, 0, 255)
 
 LEFT_UP = (-2, -1)
 UP_LEFT = (-1, -2)
@@ -34,58 +40,60 @@ DOWN_LEFT = (1, -2)
 RIGHT_DOWN = (2, 1)
 DOWN_RIGHT = (1, 2)
 
+BISHOP_IMAGE = pygame.image.load(
+    os.path.join('Assets', 'chess-piece-bishop-queen-knight-chess-8891c80137562be704e3e92a5085ce18.png'))
+BISHOP = pygame.transform.scale(
+    BISHOP_IMAGE, (FIELD_SIZE - DIST_FROM_BORDER, FIELD_SIZE - DIST_FROM_BORDER))
+KNIGHT_IMAGE = pygame.image.load(
+    os.path.join('Assets', 't1ilegfv89cm8g2kevbnkb5vm1.png'))
+KNIGHT = pygame.transform.scale(
+    KNIGHT_IMAGE, (FIELD_SIZE - DIST_FROM_BORDER, FIELD_SIZE - DIST_FROM_BORDER))
+
 FIGURE_FONT = pygame.font.SysFont('comicsans', 300 // BOARD_SIZE)
 
 
 def draw_window(knight_pos, bishop_black_pos, bishop_white_pos, goal_pos, steps_knight, steps_bishop_black,
                 steps_bishop_white):
-    knight = pygame.Rect(knight_pos[0] * FIELD_SIZE + DIST_FROM_BORDER, knight_pos[1] * FIELD_SIZE + DIST_FROM_BORDER,
-                         SQUARE_SIZE, SQUARE_SIZE)
-    bishop_black = pygame.Rect(bishop_black_pos[0] * FIELD_SIZE + DIST_FROM_BORDER,
-                               bishop_black_pos[1] * FIELD_SIZE + DIST_FROM_BORDER, SQUARE_SIZE, SQUARE_SIZE)
-    bishop_white = pygame.Rect(bishop_white_pos[0] * FIELD_SIZE + DIST_FROM_BORDER,
-                               bishop_white_pos[1] * FIELD_SIZE + DIST_FROM_BORDER, SQUARE_SIZE, SQUARE_SIZE)
     goal = pygame.Rect(goal_pos[0] * FIELD_SIZE + DIST_FROM_BORDER, goal_pos[1] * FIELD_SIZE + DIST_FROM_BORDER,
                        SQUARE_SIZE, SQUARE_SIZE)
 
-    knight_text = FIGURE_FONT.render("K", 1, BLACK)
-    bishop_black_text = FIGURE_FONT.render("Bb", 1, BLACK)
-    bishop_white_text = FIGURE_FONT.render("Bw", 1, BLACK)
+    WIN.fill(BLACK)
 
-    WIN.fill(DARK_BLUE)
+    white = True
+
+    frame = SIZE % BOARD_SIZE // 2
 
     for i in range(BOARD_SIZE):
-        pygame.draw.line(WIN, WHITE, (i * FIELD_SIZE + (SIZE % BOARD_SIZE) // BOARD_SIZE, 0),
-                         (i * FIELD_SIZE + (SIZE % BOARD_SIZE) // BOARD_SIZE, SIZE), LINE_WIDTH)
-        pygame.draw.line(WIN, WHITE, (0, i * FIELD_SIZE + (SIZE % BOARD_SIZE) // BOARD_SIZE),
-                         (SIZE, i * FIELD_SIZE + (SIZE % BOARD_SIZE) // BOARD_SIZE), LINE_WIDTH)
+        white = not white
+        for j in range(BOARD_SIZE):
+            if white:
+                firstColor = YELLOW
+            else:
+                firstColor = DARK_BLUE
+            white = not white
+            field = pygame.Rect(frame + i * FIELD_SIZE + (SIZE % BOARD_SIZE) // BOARD_SIZE,
+                                frame + j * FIELD_SIZE + (SIZE % BOARD_SIZE) // BOARD_SIZE, FIELD_SIZE, FIELD_SIZE)
 
-    pygame.draw.line(WIN, WHITE, (SIZE - LINE_WIDTH, 0), (SIZE - LINE_WIDTH, SIZE), LINE_WIDTH)
-    pygame.draw.line(WIN, WHITE, (0, SIZE - LINE_WIDTH), (SIZE, SIZE - LINE_WIDTH), LINE_WIDTH)
+            pygame.draw.rect(WIN, firstColor, field)
 
-    pygame.draw.rect(WIN, WHITE, knight)
-    pygame.draw.ellipse(WIN, WHITE, bishop_black)
-    pygame.draw.ellipse(WIN, WHITE, bishop_white)
-    pygame.draw.rect(WIN, GREEN, goal)
+    pygame.draw.rect(WIN, LIGHT_YELLOW, goal)
 
-    WIN.blit(knight_text,
-             (knight_pos[0] * FIELD_SIZE + 2 * DIST_FROM_BORDER, knight_pos[1] * FIELD_SIZE + 2 * DIST_FROM_BORDER))
-    WIN.blit(bishop_black_text,
-             (FIELD_SIZE * bishop_black_pos[0] + 2 * DIST_FROM_BORDER,
-              FIELD_SIZE * bishop_black_pos[1] + 2 * DIST_FROM_BORDER))
-    WIN.blit(bishop_white_text,
-             (FIELD_SIZE * bishop_white_pos[0] + 2 * DIST_FROM_BORDER,
-              FIELD_SIZE * bishop_white_pos[1] + 2 * DIST_FROM_BORDER))
+    WIN.blit(KNIGHT,
+             (knight_pos[0] * FIELD_SIZE, knight_pos[1] * FIELD_SIZE + DIST_FROM_BORDER))
+    WIN.blit(BISHOP,
+             (FIELD_SIZE * bishop_black_pos[0] + DIST_FROM_BORDER,
+              FIELD_SIZE * bishop_black_pos[1] + DIST_FROM_BORDER))
+    WIN.blit(BISHOP,
+             (FIELD_SIZE * bishop_white_pos[0] + DIST_FROM_BORDER,
+              FIELD_SIZE * bishop_white_pos[1] + DIST_FROM_BORDER))
 
-    firstColor = (0, 255, 0)
-    secondColor = (255, 0, 0)
     color = 1
 
     for i in range(0, len(steps_knight) - 1, 2):
         if color % 2 == 0:
-            col = firstColor
+            col = LIGHT_YELLOW
         else:
-            col = secondColor
+            col = WHITE
         color += 1
         pygame.draw.line(WIN, col,
                          numpy.add(numpy.multiply(steps_knight[i], (62, 62)), (31, 31)),
@@ -93,9 +101,9 @@ def draw_window(knight_pos, bishop_black_pos, bishop_white_pos, goal_pos, steps_
 
     for i in range(0, len(steps_bishop_black) - 1, 2):
         if color % 2 == 0:
-            col = firstColor
+            col = BLACK
         else:
-            col = secondColor
+            col = BLUE
         color += 1
         pygame.draw.line(WIN, col,
                          numpy.add(numpy.multiply(steps_bishop_black[i], (62, 62)), (31, 31)),
@@ -103,9 +111,9 @@ def draw_window(knight_pos, bishop_black_pos, bishop_white_pos, goal_pos, steps_
 
     for i in range(0, len(steps_bishop_white) - 1, 2):
         if color % 2 == 0:
-            col = firstColor
+            col = BLACK
         else:
-            col = secondColor
+            col = BLUE
         color += 1
         pygame.draw.line(WIN, col,
                          numpy.add(numpy.multiply(steps_bishop_white[i], (62, 62)), (31, 31)),
@@ -130,8 +138,6 @@ def main():
     run = True
     clock = pygame.time.Clock()
 
-    directions = (LEFT_UP, UP_LEFT, RIGHT_UP, UP_RIGHT, LEFT_DOWN, DOWN_LEFT, RIGHT_DOWN, DOWN_RIGHT)
-
     bishop_black_pos = [5, 1]
     bishop_white_pos = [0, 1]
     goal_pos = [6, 1]
@@ -141,6 +147,7 @@ def main():
     steps_bishop_white = []
 
     display_pause = False
+    game_over = False
 
     knight = Knight.Knight()
     bishop_black = Bishop(bishop_black_pos)
@@ -162,54 +169,57 @@ def main():
                 run = False
                 pygame.quit()
 
-            if event.type == pygame.KEYDOWN:
-                # if event.key == pygame.K_DOWN:
-                #     bishop_pos[1] += 1
-                # if event.key == pygame.K_UP:
-                #     bishop_pos[1] -= 1
-                # if event.key == pygame.K_LEFT:
-                #     bishop_pos[0] -= 1
-                # if event.key == pygame.K_RIGHT:
-                #     bishop_pos[0] += 1
-                # if event.key == pygame.K_s:
-                #     knight_pos[1] += 1
-                #     knight.pos[1] += 1
-                # if event.key == pygame.K_w:
-                #     knight_pos[1] -= 1
-                #     knight.pos[1] -= 1
-                # if event.key == pygame.K_a:
-                #     knight_pos[0] -= 1
-                #     knight.pos[0] -= 1
-                # if event.key == pygame.K_d:
-                #     knight_pos[0] += 1
-                #     knight.pos[0] += 1
+            if not game_over:
+                if event.type == pygame.KEYDOWN:
+                    # if event.key == pygame.K_DOWN:
+                    #     bishop_pos[1] += 1
+                    # if event.key == pygame.K_UP:
+                    #     bishop_pos[1] -= 1
+                    # if event.key == pygame.K_LEFT:
+                    #     bishop_pos[0] -= 1
+                    # if event.key == pygame.K_RIGHT:
+                    #     bishop_pos[0] += 1
+                    # if event.key == pygame.K_s:
+                    #     knight_pos[1] += 1
+                    #     knight.pos[1] += 1
+                    # if event.key == pygame.K_w:
+                    #     knight_pos[1] -= 1
+                    #     knight.pos[1] -= 1
+                    # if event.key == pygame.K_a:
+                    #     knight_pos[0] -= 1
+                    #     knight.pos[0] -= 1
+                    # if event.key == pygame.K_d:
+                    #     knight_pos[0] += 1
+                    #     knight.pos[0] += 1
 
-                if event.key == pygame.K_SPACE:
-                    if move == 1:
-                        steps_knight = knight.nextMove(goal_pos)
-                        knight_pos = knight.pos
-                        print("knight move")
-                        move = 0
-                    elif move == 0:
-                        steps_bishop_black = bishop_black.nextMove(knight_pos)
-                        bishop_black_pos = bishop_black.pos
+                    if event.key == pygame.K_SPACE:
+                        if move == 1:
+                            print("knight move")
+                            steps_knight = knight.nextMove(goal_pos)
+                            if (knight.pos[0] == goal_pos[0] and knight.pos[1] == goal_pos[1]) or \
+                                    (knight.pos[0] == knight_pos[0] and knight.pos[1] == knight_pos[1]):
+                                knight_pos = knight.pos
+                                game_over = True
+                            else:
+                                knight_pos = knight.pos
+                                print(knight_pos)
+                                move = 0
+                        elif move == 0:
+                            print("black bishop move")
+                            steps_bishop_black = bishop_black.nextMove(knight_pos)
+                            bishop_black_pos = bishop_black.pos
 
-                        steps_bishop_white = bishop_white.nextMove(knight_pos)
-                        bishop_white_pos = bishop_white.pos
-                        print("bishop move")
-                        move = 1
+                            print("white bishop move")
+                            steps_bishop_white = bishop_white.nextMove(knight_pos)
+                            bishop_white_pos = bishop_white.pos
 
-                    # rand = random.randrange(0, 8)
-                    # print("direction " + str(directions[rand]))
-                    # knight_pos = knight_move(knight_pos, directions[rand])
-                    # print(knight_pos)
-                    # knight.knight_move(directions[rand])
+                            move = 1
 
-                if event.key == pygame.K_z:
-                    display_pause = not display_pause
+                    if event.key == pygame.K_z:
+                        display_pause = not display_pause
 
-                if event.key == pygame.K_x:
-                    knight.nextMove(goal_pos)
+                    if event.key == pygame.K_x:
+                        knight.nextMove(goal_pos)
 
         bishop_black.fillRange()
         bishop_white.fillRange()
