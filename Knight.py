@@ -6,7 +6,7 @@ from NextMove import NextMove
 
 class Knight:
     def __init__(self):
-        self.pos = [0, 6]
+        self.pos = [1, 15]
         self.neighbours = []
         self.obstacles = []
         self.steps = 0

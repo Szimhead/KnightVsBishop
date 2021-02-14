@@ -15,7 +15,7 @@ FPS = 60
 WIN = pygame.display.set_mode((SIZE, SIZE + 50))
 pygame.display.set_caption("KnightVsBishop")
 
-BOARD_SIZE = 8
+BOARD_SIZE = 30
 FIELD_SIZE = SIZE // BOARD_SIZE
 DIST_FROM_BORDER = FIELD_SIZE // 10 + 2
 SQUARE_SIZE = FIELD_SIZE - 2 * DIST_FROM_BORDER
@@ -64,7 +64,8 @@ def draw_window(knight_pos, bishop_black_pos, bishop_white_pos, goal_pos, steps_
     frame = SIZE % BOARD_SIZE // 2
 
     for i in range(BOARD_SIZE):
-        white = not white
+        if BOARD_SIZE % 2 == 0:
+            white = not white
         for j in range(BOARD_SIZE):
             if white:
                 firstColor = YELLOW
@@ -96,8 +97,10 @@ def draw_window(knight_pos, bishop_black_pos, bishop_white_pos, goal_pos, steps_
             col = WHITE
         color += 1
         pygame.draw.line(WIN, col,
-                         numpy.add(numpy.multiply(steps_knight[i], (62, 62)), (31, 31)),
-                         numpy.add(numpy.multiply(steps_knight[i + 1], (62, 62)), (31, 31)), 3)
+                         numpy.add(numpy.multiply(steps_knight[i],
+                                                  (FIELD_SIZE, FIELD_SIZE)), (FIELD_SIZE // 2, FIELD_SIZE//2)),
+                         numpy.add(numpy.multiply(steps_knight[i + 1],
+                                                  (FIELD_SIZE, FIELD_SIZE)), (FIELD_SIZE // 2, FIELD_SIZE//2)), 3)
 
     for i in range(0, len(steps_bishop_black) - 1, 2):
         if color % 2 == 0:
@@ -106,8 +109,10 @@ def draw_window(knight_pos, bishop_black_pos, bishop_white_pos, goal_pos, steps_
             col = BLUE
         color += 1
         pygame.draw.line(WIN, col,
-                         numpy.add(numpy.multiply(steps_bishop_black[i], (62, 62)), (31, 31)),
-                         numpy.add(numpy.multiply(steps_bishop_black[i + 1], (62, 62)), (31, 31)), 3)
+                         numpy.add(numpy.multiply(steps_bishop_black[i],
+                                                  (FIELD_SIZE, FIELD_SIZE)), (FIELD_SIZE // 2, FIELD_SIZE//2)),
+                         numpy.add(numpy.multiply(steps_bishop_black[i + 1],
+                                                  (FIELD_SIZE, FIELD_SIZE)), (FIELD_SIZE // 2, FIELD_SIZE//2)), 3)
 
     for i in range(0, len(steps_bishop_white) - 1, 2):
         if color % 2 == 0:
@@ -116,8 +121,10 @@ def draw_window(knight_pos, bishop_black_pos, bishop_white_pos, goal_pos, steps_
             col = BLUE
         color += 1
         pygame.draw.line(WIN, col,
-                         numpy.add(numpy.multiply(steps_bishop_white[i], (62, 62)), (31, 31)),
-                         numpy.add(numpy.multiply(steps_bishop_white[i + 1], (62, 62)), (31, 31)), 3)
+                         numpy.add(numpy.multiply(steps_bishop_white[i],
+                                                  (FIELD_SIZE, FIELD_SIZE)), (FIELD_SIZE // 2, FIELD_SIZE//2)),
+                         numpy.add(numpy.multiply(steps_bishop_white[i + 1],
+                                                  (FIELD_SIZE, FIELD_SIZE)), (FIELD_SIZE // 2, FIELD_SIZE//2)), 3)
 
     pygame.display.update()
 
@@ -138,8 +145,8 @@ def main():
     run = True
     clock = pygame.time.Clock()
 
-    bishop_black_pos = [5, 1]
-    bishop_white_pos = [0, 1]
+    bishop_black_pos = [5, 2]
+    bishop_white_pos = [3, 5]
     goal_pos = [6, 1]
 
     steps_knight = []
