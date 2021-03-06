@@ -15,7 +15,7 @@ FPS = 60
 WIN = pygame.display.set_mode((SIZE, SIZE + 50))
 pygame.display.set_caption("KnightVsBishop")
 
-BOARD_SIZE = 30
+BOARD_SIZE = 8
 FIELD_SIZE = SIZE // BOARD_SIZE
 DIST_FROM_BORDER = FIELD_SIZE // 10 + 2
 SQUARE_SIZE = FIELD_SIZE - 2 * DIST_FROM_BORDER
@@ -186,18 +186,18 @@ def main():
                     #     bishop_pos[0] -= 1
                     # if event.key == pygame.K_RIGHT:
                     #     bishop_pos[0] += 1
-                    # if event.key == pygame.K_s:
-                    #     knight_pos[1] += 1
-                    #     knight.pos[1] += 1
-                    # if event.key == pygame.K_w:
-                    #     knight_pos[1] -= 1
-                    #     knight.pos[1] -= 1
-                    # if event.key == pygame.K_a:
-                    #     knight_pos[0] -= 1
-                    #     knight.pos[0] -= 1
-                    # if event.key == pygame.K_d:
-                    #     knight_pos[0] += 1
-                    #     knight.pos[0] += 1
+                    if event.key == pygame.K_s:
+                        knight_pos[1] += 1
+                        knight.pos[1] += 1
+                    if event.key == pygame.K_w:
+                        knight_pos[1] -= 1
+                        knight.pos[1] -= 1
+                    if event.key == pygame.K_a:
+                        knight_pos[0] -= 1
+                        knight.pos[0] -= 1
+                    if event.key == pygame.K_d:
+                        knight_pos[0] += 1
+                        knight.pos[0] += 1
 
                     if event.key == pygame.K_SPACE:
                         if move == 1:
